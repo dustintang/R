@@ -1,0 +1,55 @@
+---
+title: "周周看"
+author: "dustin"
+date: "2017/2/26"
+output: word_document
+---
+
+```library(xml2)
+library(rvest)
+library(stringr)
+
+gethd<-function(urlnopage,page){
+  url<-paste0(urlnopage,page)
+  web<-read_html(url,encoding="UTF-8")
+  hdtitle<-web %>% html_nodes("h3") %>% html_text()
+  hdtitle<-hdtitle[-11]
+  hd<-web %>% html_nodes("ul.event-horizontal-list-new") %>% html_nodes("div") %>% html_text()
+  hd<-str_replace_all(hd," ","")
+  hd<-str_replace_all(hd,"\r","")
+  hd<-str_replace_all(hd,"\n","")
+  hd<-matrix(hd,ncol=3,byrow = T)
+  hd<-cbind(hdtitle,hd)
+}
+
+url<-"http://www.huodongxing.com/eventlist?orderby=r&d=t1&city=上海&page="
+hdx<-matrix( ncol = 4)
+for (i in 1:25){
+  hd<-gethd(url,i)
+  hdx<-rbind(hdx,hd)
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,24 @@
+##加载
+setwd("E:/data")
+library(ggplot2)
+library(scales)
+wechat <- read.csv("wechat/1.csv")
+##数据处理
+names(wechat) <- c("date","total","read","share","order")
+wechat$total1 <- with(data = wechat,c(total+100-100*order))
+wechat$date <- as.Date(wechat$date)
+wechat$order <- as.factor(wechat$order)
+wechat[which(wechat$read>3500),3]  <- 3500
+which(wechat$read==max(wechat$read))
+##总体图
+t <- ggplot(wechat,aes(date,total1,size=read,colour=order))
+t1 <- t+geom_point()+xlab("时间")+ylab("送达人数")+scale_colour_brewer("第n篇",palette="Dark2")+ggtitle("KAWAII公众平台")
+t2 <- t1+scale_x_date(breaks="1 month",labels=date_format("%y/%m"))+scale_size("阅读量")
+t2
+##分享图
+qplot(read,share,data=wechat[-65,],colour=order)
+s1 <- qplot(read,share,data=wechat[-65,],colour=order)+facet_grid(order~.,margins=T)
+s2 <- s1+xlab("阅读数")+ylab("分享数")+scale_colour_hue("第n篇")+ggtitle("KAWAII公众平台")
+s2
+##阅读图
+qplot(date,read,data=wechat,)
